@@ -1,0 +1,175 @@
+{
+    "identifier": {
+        "location": "DN1",
+        "value": "Ver：V7.0"
+    },
+    "cell": [
+        {
+            "name": "submitDepartment",
+            "location": "B5"
+        },
+        {
+            "name": "machineModel",
+            "location": "B6"
+        },
+        {
+            "name": "productName",
+            "location": "B7"
+        },
+        {
+            "name": "productDescription",
+            "location": "B8"
+        },
+        {
+            "name": "blueprintCode",
+            "location": "B9"
+        },
+        {
+            "name": "measureDevice",
+            "location": "B10"
+        },
+        {
+            "name": "moldHole",
+            "location": "B11"
+        },
+        {
+            "name": "submitter",
+            "location": "F5"
+        },
+        {
+            "name": "sampleTime",
+            "location": "F6"
+        },
+        {
+            "name": "submitTime",
+            "location": "F7"
+        },
+        {
+            "name": "measureType",
+            "location": "F8"
+        },
+        {
+            "name": "blueprintVersion",
+            "location": "F9"
+        },
+        {
+            "name": "measureEnvironment",
+            "location": "F10"
+        },
+        {
+            "name": "sampleSize",
+            "location": "F11"
+        },
+        {
+            "name": "measureStartTime",
+            "location": "DI8"
+        },
+        {
+            "name": "measureFinishTime",
+            "location": "DI9"
+        },
+        {
+            "name": "measurer",
+            "location": "DI10"
+        },
+        {
+            "name": "auditor",
+            "location": "DI11"
+        },
+        {
+            "name": "spcCount",
+            "location": "DH5"
+        },
+        {
+            "name": "faiCount",
+            "location": "DH6"
+        },
+        {
+            "name": "ngCount",
+            "location": "DK5"
+        },
+        {
+            "name": "totalCount",
+            "location": "DN5"
+        },
+        {
+            "name": "expectPassRate",
+            "location": "DI7"
+        },
+        {
+            "name": "actualPassRate",
+            "location": "DK7"
+        },
+        {
+            "name": "finalResult",
+            "location": "DM7"
+        }
+    ],
+    "row": [
+        {
+            "name": "sampleResult",
+            "range": "J11:DE11",
+            "length": "@sampleSize"
+        },
+        {
+            "name": "machine",
+            "range": "J12:DE12",
+            "length": "@sampleSize"
+        },
+        {
+            "name": "mold",
+            "range": "J13:DE13",
+            "length": "@sampleSize"
+        },
+        {
+            "name": "hole",
+            "range": "J14:DE14",
+            "length": "@sampleSize"
+        }
+    ],
+    "area": [
+        {
+            "iteratorType": "row",
+            "range": "15:",
+            "components": [
+                {
+                    "name": "faiNo",
+                    "column": "B15"
+                },
+                {
+                    "name": "spcNo",
+                    "column": "C15"
+                },
+                {
+                    "name": "tool",
+                    "column": "D15"
+                },
+                {
+                    "name": "standardValue",
+                    "column": "E15"
+                },
+                {
+                    "name": "upperTolerance",
+                    "column": "F15"
+                },
+                {
+                    "name": "lowerTolerance",
+                    "column": "G15"
+                },
+                {
+                    "name": "measureValues",
+                    "column": "J15:DF15",
+                    "length": "@sampleSize"
+                },
+                {
+                    "name": "faiResult",
+                    "column": "DI15"
+                },
+                {
+                    "name": "remark",
+                    "column": "DN15"
+                }
+            ]
+        }
+    ]
+}

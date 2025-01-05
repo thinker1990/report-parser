@@ -59,19 +59,41 @@ def parse_length(length, dict):
         return dict[length.strip('@')]
 
 
-# Reading an Excel file
-wb = read_excel("./report.xlsm", header=None)
+def load_json():
+    """
+    从文件中加载JSON数据。
 
-dict = {}
-with open('v7.json', 'r') as f:
-    js = json.load(f)
+    Args:
+        无参数。
+
+    Returns:
+        dict: 从文件中加载的JSON数据。
+    """
+    with open('v7.json', 'r') as f:
+        return json.load(f)
+
+def parse_excel_v7(excel_content):
+    """
+    从Excel文件中解析数据，并返回字典格式的解析结果。
+
+    Args:
+        无
+
+    Returns:
+        dict: 包含解析结果的字典。
+
+    """
+    dict = {}
+    wb = read_excel(excel_content, header=None, keep_default_na=False)
+
+    js = load_json()
     for i in js["cell"]:
         dict[i['name']] = wb.iloc[xl_cell_to_rowcol(i['location'])]
-    
+
     for i in js["row"]:
         row = wb.iloc[range_slice(i['range'])].values.flatten()
-        dict[i['name']] = row[:parse_length(i['length'], dict)]
-    
+        dict[i['name']] = row[:parse_length(i['length'], dict)].tolist()
+
     for i in js["area"]:
         dict['area'] = []
         rows = wb.index[parse_row_range(i['range'])]
@@ -82,10 +104,10 @@ with open('v7.json', 'r') as f:
                 if ':' in col:
                     _, col_slice = range_slice(col)
                     part = wb.iloc[[idx], col_slice].values.flatten()
-                    faiDetail[j['name']] = part[:parse_length(j['length'], dict)]
+                    faiDetail[j['name']] = part[:parse_length(j['length'], dict)].tolist()
                 else:
                     col_index = xl_cell_to_rowcol(col)[1]
                     faiDetail[j['name']] = wb.iloc[idx, col_index]
             dict['area'].append(faiDetail)
 
-print(dict)
+    return dict

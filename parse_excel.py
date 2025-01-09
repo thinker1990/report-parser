@@ -1,114 +1,52 @@
 import json
 from pandas import read_excel
-from xlsxwriter.utility import xl_cell_to_rowcol
+from excel_parser import parse_cells, parse_rows, parse_repeat_rows
 
-def range_slice(range_str):
+
+def load_json() -> dict:
     """
-    将表示Excel单元格范围的字符串转换为两个slice对象，分别表示行和列的切片范围。
+    Load and return the contents of a JSON file.
 
-    Args:
-        range_str (str): 表示Excel单元格范围的字符串，格式为"A1:B2"。
+    This function opens the file 'v7.json' in read mode with UTF-8 encoding,
+    reads its contents, and returns the parsed JSON data as a Python object.
 
     Returns:
-        Tuple[slice, slice]: 包含两个slice对象的元组，分别表示行和列的切片范围。
-
-    """
-    (start_row, start_col), (stop_row, stop_col) = [
-        xl_cell_to_rowcol(c) for c in range_str.split(':')]
-    return slice(start_row, stop_row + 1), slice(start_col, stop_col + 1)
-
-def parse_row_range(range_str):
-    """
-    解析行范围字符串并返回对应的slice对象。
-
-    参数:
-        range_str (str): 行范围字符串，格式为"start:end"，其中start和end可以是数字或空字符串。
-
-    返回:
-        slice: 解析得到的slice对象。
-
-    抛出:
-        ValueError: 如果range_str的格式不正确。
-    """
-    try:
-        start, end = range_str.split(':')
-    except ValueError:
-        raise ValueError("range_str的格式不正确，应为'start:end'。")
-
-    start = int(start) - 1 if start else 0
-    end = int(end) if end else None
-    return slice(start, end, None)  # 显式设置step为None
-
-def parse_length(length, lookup):
-    """
-    根据传入的长度值返回相应的长度。
-
-    Args:
-        length (int|str): 传入的长度值，可以是整数类型或字符串类型。
-        lookup (dict): 一个字典，用于将字符串类型的长度值映射到对应的整数长度值。
-
-    Returns:
-        int: 返回解析后的长度值，如果传入的length是整数类型，则直接返回该整数；
-             如果传入的length是字符串类型，则从lookup中查找对应的整数长度值并返回。
+        dict: The parsed JSON data from the file.
 
     Raises:
-        KeyError: 如果传入的length是字符串类型，并且在lookup中找不到对应的键，则会引发KeyError异常。
-    """
-    if isinstance(length, int):
-        return length
-    if isinstance(length, str):
-        return lookup[length.strip('@')]
+        FileNotFoundError: If the file 'v7.json' does not exist.
+        json.JSONDecodeError: If the file contains invalid JSON.
 
-
-def load_json():
-    """
-    从文件中加载JSON数据。
-
-    Args:
-        无参数。
-
-    Returns:
-        dict: 从文件中加载的JSON数据。
     """
     with open('v7.json', mode='r', encoding='utf-8') as f:
         return json.load(f)
 
-def parse_excel_v7(excel_content):
-    """
-    从Excel文件中解析数据，并返回字典格式的解析结果。
 
+def parse_excel_v7(excel: bytes) -> dict:
+    """
+    Parses an Excel file and extracts data based on a predefined mapping.
+    
     Args:
-        无
-
+        excel (bytes): The Excel file content in bytes.
+    
     Returns:
-        dict: 包含解析结果的字典。
+        dict: A dictionary containing parsed data with the following keys:
+            - 'cells': Parsed cell data.
+            - 'rows': Parsed row data.
+            - 'repeatRows': Parsed repeat row data.
 
     """
+    mapping = load_json()
+    sheet = read_excel(excel, header=None, keep_default_na=False)
+
     result = {}
-    wb = read_excel(excel_content, header=None, keep_default_na=False)
-
-    js = load_json()
-    for i in js["cell"]:
-        result[i['name']] = wb.iloc[xl_cell_to_rowcol(i['location'])]
-
-    for i in js["row"]:
-        row = wb.iloc[range_slice(i['range'])].values.flatten()
-        result[i['name']] = row[:parse_length(i['length'], result)].tolist()
-
-    for i in js["area"]:
-        result['area'] = []
-        rows = wb.index[parse_row_range(i['range'])]
-        for idx in rows:
-            fai = {}
-            for j in i["components"]:
-                col = j['column']
-                if ':' in col:
-                    _, col_slice = range_slice(col)
-                    part = wb.iloc[[idx], col_slice].values.flatten()
-                    fai[j['name']] = part[:parse_length(j['length'], result)].tolist()
-                else:
-                    col_index = xl_cell_to_rowcol(col)[1]
-                    fai[j['name']] = wb.iloc[idx, col_index]
-            result['area'].append(fai)
+    result['cells'] = parse_cells(mapping['cells'], sheet)
+    result['rows'] = parse_rows(mapping['rows'], sheet)
+    result['repeatRows'] = parse_repeat_rows(mapping['repeatRows'], sheet)
 
     return result
+
+
+if __name__ == '__main__':
+    with open('report.xlsm', 'rb') as f:
+        print(parse_excel_v7(f.read()))

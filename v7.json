@@ -26,27 +26,24 @@
         "actualPassRate": "DK7",
         "finalResult": "DM7"
     },
-    "rows": {
-        "sampleResult": "J11:DE11",
-        "machine": "J12:DE12",
-        "mold": "J13:DE13",
-        "hole": "J14:DE14"
+    "ranges": {
+        "sampleResult": "J11:AO11",
+        "machine": "J12:AO12",
+        "mold": "J13:AO13",
+        "hole": "J14:AO14"
     },
-    "repeatRows": [
-        {
-            "name": "measureDetails",
-            "range": "15:",
-            "components": {
-                "faiNo": "B15",
-                "spcNo": "C15",
-                "tool": "D15",
-                "standardValue": "E15",
-                "upperTolerance": "F15",
-                "lowerTolerance": "G15",
-                "measureValues": "J15:DE15",
-                "faiResult": "DI15",
-                "remark": "DN15"
-            }
+    "repeatRows": {
+        "range": "15:",
+        "components": {
+            "faiNo": "B15",
+            "spcNo": "C15",
+            "tool": "D15",
+            "standardValue": "E15",
+            "upperTolerance": "F15",
+            "lowerTolerance": "G15",
+            "measureValues": "J15:AO15",
+            "faiResult": "DI15",
+            "remark": "DN15"
         }
-    ]
+    }
 }

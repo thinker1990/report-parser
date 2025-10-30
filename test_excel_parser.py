@@ -31,6 +31,16 @@ class TestExtractHelpers(unittest.TestCase):
         result = extract_cell_value('C3', self.sheet)
         self.assertEqual(result, 11)
 
+    def test_extract_cell_value_with_row_override(self):
+        """Test extracting a cell value with row override."""
+        # Location says A1 (row 0), but we want row 2
+        result = extract_cell_value('A1', self.sheet, row_index=2)
+        self.assertEqual(result, 3)  # Value at A3
+        
+        # Location says B2 (row 1), but we want row 3
+        result = extract_cell_value('B2', self.sheet, row_index=3)
+        self.assertEqual(result, 8)  # Value at B4
+
     def test_extract_range_values(self):
         """Test extracting values from a range."""
         result = extract_range_values('A1:B2', self.sheet)
